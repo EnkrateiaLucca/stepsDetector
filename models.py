@@ -1,5 +1,5 @@
 from keras import Sequential
-from keras.layers import LSTM, Dense, Dropout
+from keras.layers import LSTM, Dense, Dropout, Conv1D, MaxPooling1D, Flatten
 import keras
 from keras import layers
 
@@ -44,6 +44,37 @@ def build_model(input_shape,head_size,num_heads,ff_dim,num_transformer_blocks,
         x = layers.Dropout(mlp_dropout)(x)
     outputs = layers.Dense(n_classes, activation="sigmoid")(x)
     return keras.Model(inputs, outputs)
+
+
+def basic_neural_net(input_shape):
+    model = Sequential()
+    model.add(Dense(64, activation='relu', input_shape=input_shape))
+    model.add(Dense(32, activation='relu'))
+    model.add(Dense(32, activation='relu'))
+    model.add(Dense(16, activation='relu'))
+    model.add(Dense(8, activation='relu'))
+    model.add(Dense(1, activation='sigmoid'))
+    model.compile(loss='binary_crossentropy', optimizer="adam", metrics=['accuracy'])
+    return model
+
+
+def cnnModel(input_shape):
+    """
+    A cnn model to classify a one dimensional time series
+    signal
+    """
+    model = Sequential()
+    model.add(Conv1D(filters=32, kernel_size=3, activation='relu', input_shape=input_shape))
+    model.add(MaxPooling1D(pool_size=2))
+    model.add(Conv1D(filters=64, kernel_size=3, activation='relu'))
+    model.add(MaxPooling1D(pool_size=2))
+    model.add(Flatten())
+    model.add(Dense(64, activation='relu'))
+    model.add(Dense(32, activation='relu'))
+    model.add(Dense(16, activation='relu'))
+    model.add(Dense(1, activation='sigmoid'))
+    model.compile(loss='binary_crossentropy', optimizer="adam", metrics=['accuracy'])
+    return model
 
 
 
