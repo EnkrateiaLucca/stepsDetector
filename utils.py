@@ -1,5 +1,7 @@
 from scipy.ndimage.filters import gaussian_filter1d
+from collections import Counter
 import numpy as np
+
 
 def dataPrepRawSignal(data, labels):
     # smoothing the signal
@@ -13,7 +15,11 @@ def dataPrepRawSignal(data, labels):
     for i in range(0, len(smoothed_signal) - window_size, window_size):
         try:
             x[int(i/window_size)] = smoothed_signal[i:i+window_size]
-            y[int(i/window_size)] = labels["Step"][i+window_size]
+            window = list(labels["Step"][i:i+window_size])
+            if window.count(1) == 3:
+                y[int(i/window_size)] = 1
+            else:
+                y[int(i/window_size)] = 0
         except:
             break
 
